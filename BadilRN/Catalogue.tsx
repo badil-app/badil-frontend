@@ -7,6 +7,7 @@ import {
     Image,
     ScrollView,
 } from "react-native";
+import { Button } from "tamagui";
 import globalStyles from "./theme";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import { ProductsService } from "./productService";
@@ -101,33 +102,17 @@ export default function Catalogue({ navigation, route }) {
                                         </View>
                                     </View>
 
-                                    {/* <Text style={styles.cardPrice}>
-                                            <Text>from </Text>
-
-                                            <Text style={styles.cardPriceValue}>
-                                                ${price.toLocaleString("en-US")}{" "}
-                                            </Text>
-
-                                            <Text
-                                                style={
-                                                    styles.cardPriceCurrency
-                                                }>
-                                                USD
-                                            </Text>
-                                        </Text> */}
-
-                                    <TouchableOpacity
+                                    <Button
                                         onPress={() =>
                                             handleDetailRequest({
                                                 barcode: barcode,
                                             })
-                                        }>
-                                        <View style={styles.btn}>
-                                            <Text style={styles.btnText}>
-                                                Product Details
-                                            </Text>
-                                        </View>
-                                    </TouchableOpacity>
+                                        }
+                                        backgroundColor={"#173153"}>
+                                        <Text style={styles.btnText}>
+                                            Product Details
+                                        </Text>
+                                    </Button>
                                 </View>
                             </View>
                         );
