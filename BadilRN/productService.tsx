@@ -2,7 +2,7 @@ import axios from "axios";
 import { Product } from "./Product";
 
 export const setupAxios = () => {
-    axios.defaults.baseURL = "badil2.azurewebsites.net/api/v1";
+    axios.defaults.baseURL = "https://badil2.azurewebsites.net/api/v1";
 };
 export class _ProductsService {
     async getProduct(barcode: string) {
