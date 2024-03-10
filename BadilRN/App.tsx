@@ -15,6 +15,7 @@ import MyStack from "./Stack";
 
 import { config } from "@tamagui/config/v3";
 import { Product } from "./Product";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // you usually export this from a tamagui.config.ts file
 const tamaguiConfig = createTamagui(config);
@@ -35,15 +36,19 @@ export type NavParamList = {
     };
 };
 
+const queryClient = new QueryClient();
+
 export default function App() {
     return (
         <TamaguiProvider config={tamaguiConfig}>
             <PortalProvider>
-                <SafeAreaView style={{ flex: 1 }}>
-                    <NavigationContainer>
-                        <MyStack />
-                    </NavigationContainer>
-                </SafeAreaView>
+                <QueryClientProvider client={queryClient}>
+                    <SafeAreaView style={{ flex: 1 }}>
+                        <NavigationContainer>
+                            <MyStack />
+                        </NavigationContainer>
+                    </SafeAreaView>
+                </QueryClientProvider>
             </PortalProvider>
         </TamaguiProvider>
     );
