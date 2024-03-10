@@ -44,6 +44,7 @@ export default function Catalogue({
             navigation.navigate("ProductDetail", { product: product });
         }
     }
+    console.log("products", barcode);
 
     return (
         <View style={styles.root}>

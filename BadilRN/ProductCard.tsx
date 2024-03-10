@@ -1,10 +1,9 @@
-import type { CardProps } from "tamagui";
-import { Product } from "./Product";
-import { Button, Card, H2, Image, Paragraph, XStack, Text } from "tamagui";
 import { StyleSheet, View } from "react-native";
-import { InteractiveStarRow } from "./utils";
+import type { CardProps } from "tamagui";
+import { Button, Card, H2, Image, Paragraph, Text, XStack } from "tamagui";
 import NutriCircle from "./NutriCircle";
-import defaultImage from "./assets/images/badil-logo.png";
+import { Product } from "./Product";
+import { InteractiveStarRow } from "./utils";
 
 type DemoCardProps = CardProps & {
     product: {
@@ -17,7 +16,7 @@ type DemoCardProps = CardProps & {
     };
 };
 
-export function CardDemo({ product }) {
+export function CardDemo({ product }: { product: Product }) {
     return (
         <XStack $sm={{ flexDirection: "column" }} paddingHorizontal="$4" space>
             <DemoCard
@@ -65,9 +64,14 @@ export function DemoCard(props: DemoCardProps) {
                         source={{
                             uri: props.product.img
                                 ? props.product.img
-                                : defaultImage,
+                                : "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png",
                         }}
-                        style={{ maxWidth: "100%", maxHeight: "100%" }}
+                        style={{
+                            maxWidth: "100%",
+                            maxHeight: "100%",
+                            width: "100%",
+                            height: "100%",
+                        }}
                     />
                 </View>
             </View>

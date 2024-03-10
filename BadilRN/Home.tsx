@@ -1,32 +1,31 @@
 import { ReactNativeScannerView } from "@pushpendersingh/react-native-scanner";
+import { useFocusEffect } from "@react-navigation/native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Sheet } from "@tamagui/sheet";
-import { useState, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useCallback, useState } from "react";
 import {
+    ActivityIndicator,
+    Alert,
+    Dimensions,
+    Image,
+    NativeSyntheticEvent,
+    Platform,
     StyleSheet,
     Text,
     View,
-    Dimensions,
-    NativeSyntheticEvent,
-    Alert,
-    Platform,
-    Image,
-    ActivityIndicator,
 } from "react-native";
-import { Button } from "tamagui";
-import globalStyles from "./theme";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavParamList } from "./App";
-import defaultImage from "./assets/images/badil-logo.png";
 import {
-    request,
     PERMISSIONS,
-    openSettings,
     RESULTS,
+    openSettings,
+    request,
 } from "react-native-permissions";
-import { useFocusEffect } from "@react-navigation/native";
-import { dataTagSymbol, useQuery } from "@tanstack/react-query";
-import { ProductsService, setupAxios } from "./productService";
+import { Button } from "tamagui";
+import { NavParamList } from "./App";
 import NutriCircle from "./NutriCircle";
+import { ProductsService, setupAxios } from "./productService";
+import globalStyles from "./theme";
 
 const { width, height } = Dimensions.get("window");
 
@@ -129,11 +128,7 @@ export default function HomeScreen({
         }
     };
 
-    const {
-        data: product,
-        isLoading,
-        error,
-    } = useQuery({
+    const { data: product, isLoading } = useQuery({
         queryKey: ["get-product", barcodeModal.barcode],
         enabled: !!barcodeModal.barcode,
         queryFn: () => ProductsService.getProduct(barcodeModal.barcode!),
@@ -201,7 +196,9 @@ export default function HomeScreen({
                                 width={200}
                                 height={200}
                                 source={{
-                                    uri: product?.data.img,
+                                    uri:
+                                        product?.data.img ??
+                                        "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png",
                                 }}
                                 style={{ maxWidth: "100%", maxHeight: "100%" }}
                             />
