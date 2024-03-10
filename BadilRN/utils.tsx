@@ -1,7 +1,13 @@
-import { View, Image } from "react-native";
+import { View, Image, Platform, Alert } from "react-native";
 import { StarRatingDisplay } from "react-native-star-rating-widget";
 import StarRating from "react-native-star-rating-widget";
 import { useState } from "react";
+import {
+    request,
+    PERMISSIONS,
+    openSettings,
+    RESULTS,
+} from "react-native-permissions";
 
 export function InteractiveStarRow({
     providedRating,

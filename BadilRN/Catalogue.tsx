@@ -12,8 +12,25 @@ import globalStyles from "./theme";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import { ProductsService } from "./productService";
 import { StaticStarRow } from "./utils";
+import { useEffect } from "react";
+// import { useNavigation } from '@react-navigation/native';
 
 export default function Catalogue({ navigation, route }) {
+    // useEffect(() => {
+    //     navigation.setOptions({
+    //         headerLeft: () => (
+    //             <TouchableOpacity
+    //                 onPress={() => {
+    //                     // navigation.reset({
+    //                     //     index: 0,
+    //                     //     routes: [{ name: "Home" }],
+    //                     // });
+    //                     console.log("back to home");
+    //                 }}
+    //             />
+    //         ),
+    //     });
+    // }, [navigation]);
     const { barcode } = route.params;
     const productsService = new ProductsService();
     const products = productsService.getProducts();
