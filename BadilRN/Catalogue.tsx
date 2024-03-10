@@ -1,19 +1,16 @@
-import {
-    StyleSheet,
-    SafeAreaView,
-    Text,
-    TouchableOpacity,
-    View,
-    Image,
-    ScrollView,
-} from "react-native";
-import { Button } from "tamagui";
-import globalStyles from "./theme";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
+import { Button } from "tamagui";
+import { NavParamList } from "./App";
 import { ProductsService } from "./productService";
+import globalStyles from "./theme";
 import { StaticStarRow } from "./utils";
 
-export default function Catalogue({ navigation, route }) {
+export default function Catalogue({
+    navigation,
+    route,
+}: NativeStackScreenProps<NavParamList, "Catalogue">) {
     const { barcode } = route.params;
     const productsService = new ProductsService();
     const products = productsService.getProducts();
@@ -61,7 +58,7 @@ export default function Catalogue({ navigation, route }) {
                                 <Image
                                     alt=""
                                     resizeMode="cover"
-                                    source={{ uri: img }}
+                                    source={{ uri: img ?? undefined }}
                                     style={styles.cardImg}
                                 />
 

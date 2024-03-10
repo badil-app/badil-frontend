@@ -51,7 +51,7 @@ export default function HomeScreen({
         if (barcodeModal.barcode) return;
         const { value } = event.nativeEvent;
         console.log(" and barc is: " + value);
-        setBarcodeModal((prevState) => ({
+        setBarcodeModal(() => ({
             open: true,
             barcode: value,
         }));
@@ -61,7 +61,7 @@ export default function HomeScreen({
         console.log("modal swiped. isOpen is now: " + isOpen);
         if (!isOpen) {
             setTimeout(() => {
-                setBarcodeModal((prevState) => ({
+                setBarcodeModal(() => ({
                     open: false,
                     barcode: undefined,
                 }));
