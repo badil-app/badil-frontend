@@ -1,11 +1,21 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+    Button,
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
-import { Button } from "tamagui";
+import { Spinner } from "tamagui";
 import { NavParamList } from "./App";
 import { ProductsService } from "./productService";
 import globalStyles from "./theme";
 import { StaticStarRow } from "./utils";
+import { useQuery } from "@tanstack/react-query";
+import { Product } from "./Product";
 // import { useNavigation } from '@react-navigation/native';
 
 export default function Catalogue({
@@ -13,16 +23,22 @@ export default function Catalogue({
     route,
 }: NativeStackScreenProps<NavParamList, "Catalogue">) {
     const { barcode } = route.params;
-    const productsService = new ProductsService();
-    const products = productsService.getProducts();
-    function handleDetailRequest({ barcode }: { barcode: string | undefined }) {
-        if (!barcode) {
+    const {
+        data: products,
+        error,
+        isLoading,
+    } = useQuery({
+        queryKey: ["badils", barcode],
+        enabled: !!barcode,
+        queryFn: () => ProductsService.getProducts(barcode),
+    });
+    console.log("errors", error);
+    function handleDetailRequest(product: Product) {
+        if (!product || !products) {
             console.log("Barcode is undefined");
             return;
         }
-
-        const product = products.find((product) => product.barcode === barcode);
-
+        console.log("barcode: " + product.barcode);
         if (product) {
             console.log("barcode match is: " + product.barcode);
             navigation.navigate("ProductDetail", { product: product });
@@ -32,44 +48,32 @@ export default function Catalogue({
     return (
         <View style={styles.root}>
             <ScrollView style={styles.listContainer}>
-                <View
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "flex-start",
-                        marginBottom: 15,
-                    }}>
-                    <Text style={{ fontWeight: "bold", fontSize: 32 }}>
-                        {barcode}
+                {products == null && !isLoading && (
+                    <Text style={{ fontSize: 24, fontWeight: "bold" }}>
+                        No badils yet! Add your own!
                     </Text>
-                </View>
-                {products.map(
-                    (
-                        {
-                            img,
-                            productName,
-                            brand,
-                            rating,
-                            nutriScore,
-                            barcode,
-                        },
-                        index,
-                    ) => {
-                        return (
-                            <View key={index} style={styles.card}>
+                )}
+                {isLoading && <Spinner size="large" />}
+                {(products ?? []).map((product, index) => {
+                    return (
+                        <TouchableOpacity
+                            key={index}
+                            onPress={() => handleDetailRequest(product)}>
+                            <View style={styles.card}>
                                 <Image
                                     alt=""
                                     resizeMode="cover"
-                                    source={{ uri: img ?? undefined }}
+                                    source={{ uri: product.img ?? undefined }}
                                     style={styles.cardImg}
                                 />
 
                                 <View style={styles.cardBody}>
                                     <Text>
                                         <Text style={styles.cardTitle}>
-                                            {productName}
+                                            {product.productName}
                                         </Text>{" "}
                                         <Text style={styles.cardAirport}>
-                                            {brand}
+                                            {product.brand}
                                         </Text>
                                     </Text>
 
@@ -82,7 +86,7 @@ export default function Catalogue({
                                             />
 
                                             <StaticStarRow
-                                                providedRating={rating}
+                                                providedRating={product.rating}
                                             />
                                         </View>
 
@@ -95,27 +99,27 @@ export default function Catalogue({
 
                                             <Text
                                                 style={styles.cardRowItemText}>
-                                                {"NutriScore: " + nutriScore}
+                                                {"NutriScore: " +
+                                                    product.nutriScore}
                                             </Text>
                                         </View>
                                     </View>
 
-                                    <Button
-                                        onPress={() =>
-                                            handleDetailRequest({
-                                                barcode: barcode,
-                                            })
-                                        }
-                                        backgroundColor={"#173153"}>
-                                        <Text style={styles.btnText}>
-                                            Product Details
-                                        </Text>
-                                    </Button>
+                                    <View>
+                                        <Button
+                                            onPress={() => {
+                                                console.log("click");
+                                                handleDetailRequest(product);
+                                            }}
+                                            title="Product Details"
+                                            color="#173153"
+                                        />
+                                    </View>
                                 </View>
                             </View>
-                        );
-                    },
-                )}
+                        </TouchableOpacity>
+                    );
+                })}
             </ScrollView>
         </View>
     );

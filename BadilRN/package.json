@@ -27,7 +27,6 @@
     "react-native-star-rating-widget": "^1.7.3",
     "react-native-svg": "^15.1.0",
     "react-native-vector-icons": "^10.0.3",
-    "react-native-vision-camera": "^3.9.1",
     "tamagui": "^1.91.3"
   },
   "devDependencies": {
