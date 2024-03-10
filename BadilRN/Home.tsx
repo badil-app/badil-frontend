@@ -1,17 +1,26 @@
 import { ReactNativeScannerView } from "@pushpendersingh/react-native-scanner";
 import { Sheet } from "@tamagui/sheet";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
     StyleSheet,
     Text,
     View,
     Dimensions,
     NativeSyntheticEvent,
+    Alert,
+    Platform,
 } from "react-native";
 import { Button } from "tamagui";
 import globalStyles from "./theme";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavParamList } from "./App";
+import {
+    request,
+    PERMISSIONS,
+    openSettings,
+    RESULTS,
+} from "react-native-permissions";
+import { useFocusEffect } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -27,11 +36,58 @@ type BarcodeModalState = {
 export default function HomeScreen({
     navigation,
 }: NativeStackScreenProps<NavParamList, "Home">) {
-    // const [barcode, setBarcode] = useState<string | undefined>();
+    const [isCameraPermissionGranted, setIsCameraPermissionGranted] =
+        useState(false);
+
+    // useEffect(() => {
+    //     checkCameraPermission();
+    // }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            setIsCameraPermissionGranted(false);
+            checkCameraPermission();
+            setBarcodeModal((prevState) => ({
+                ...prevState,
+                barcode: undefined,
+            }));
+        }, []),
+    );
     const [barcodeModal, setBarcodeModal] = useState<BarcodeModalState>({
         open: false,
         barcode: undefined,
     });
+
+    const checkCameraPermission = async () => {
+        request(
+            Platform.OS === "ios"
+                ? PERMISSIONS.IOS.CAMERA
+                : PERMISSIONS.ANDROID.CAMERA,
+        ).then(async (result: any) => {
+            switch (result) {
+                case RESULTS.UNAVAILABLE:
+                    // console.log('This feature is not available (on this device / in this context)');
+                    break;
+                case RESULTS.DENIED:
+                    Alert.alert(
+                        "Permission Denied",
+                        "You need to grant camera permission first",
+                    );
+                    openSettings();
+                    break;
+                case RESULTS.GRANTED:
+                    setIsCameraPermissionGranted(true);
+                    break;
+                case RESULTS.BLOCKED:
+                    Alert.alert(
+                        "Permission Blocked",
+                        "You need to grant camera permission first",
+                    );
+                    openSettings();
+                    break;
+            }
+        });
+    };
 
     function handleCatalogueRoute() {
         setBarcodeModal((prevState) => ({
@@ -72,10 +128,16 @@ export default function HomeScreen({
 
     return (
         <View style={styles.container}>
-            <ReactNativeScannerView
-                style={{ height: height, width: width }}
-                onQrScanned={handleBarcodeCapture}
-            />
+            {isCameraPermissionGranted ? (
+                <ReactNativeScannerView
+                    style={{ height: height, width: width }}
+                    onQrScanned={handleBarcodeCapture}
+                />
+            ) : (
+                <Text style={{ fontSize: 30, color: "red" }}>
+                    You need to grant camera permission first
+                </Text>
+            )}
             <Sheet
                 open={barcodeModal.open}
                 onOpenChange={handleOpenChange}

@@ -6,6 +6,7 @@ import { NavParamList } from "./App";
 import { ProductsService } from "./productService";
 import globalStyles from "./theme";
 import { StaticStarRow } from "./utils";
+// import { useNavigation } from '@react-navigation/native';
 
 export default function Catalogue({
     navigation,
