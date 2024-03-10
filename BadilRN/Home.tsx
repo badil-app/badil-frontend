@@ -1,6 +1,6 @@
 import { ReactNativeScannerView } from "@pushpendersingh/react-native-scanner";
 import { Sheet } from "@tamagui/sheet";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import {
     StyleSheet,
     Text,
@@ -21,6 +21,8 @@ import {
     RESULTS,
 } from "react-native-permissions";
 import { useFocusEffect } from "@react-navigation/native";
+import { useQuery } from "@tanstack/react-query";
+import { ProductsService, setupAxios } from "./productService";
 
 const { width, height } = Dimensions.get("window");
 
@@ -33,16 +35,13 @@ type BarcodeModalState = {
     barcode: string | undefined;
 };
 
+setupAxios();
+
 export default function HomeScreen({
     navigation,
 }: NativeStackScreenProps<NavParamList, "Home">) {
     const [isCameraPermissionGranted, setIsCameraPermissionGranted] =
         useState(false);
-
-    // useEffect(() => {
-    //     checkCameraPermission();
-    // }, []);
-
     useFocusEffect(
         useCallback(() => {
             setIsCameraPermissionGranted(false);
@@ -125,6 +124,12 @@ export default function HomeScreen({
             }, 500);
         }
     };
+
+    const { data: product, isLoading } = useQuery({
+        queryKey: ["get-product", barcodeModal.barcode],
+        enabled: !!barcodeModal.barcode,
+        queryFn: () => ProductsService.getProduct(barcodeModal.barcode!),
+    });
 
     return (
         <View style={styles.container}>
