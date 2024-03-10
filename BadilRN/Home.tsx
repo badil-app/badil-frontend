@@ -9,11 +9,14 @@ import {
     NativeSyntheticEvent,
     Alert,
     Platform,
+    Image,
+    ActivityIndicator,
 } from "react-native";
 import { Button } from "tamagui";
 import globalStyles from "./theme";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavParamList } from "./App";
+import defaultImage from "./assets/images/badil-logo.png";
 import {
     request,
     PERMISSIONS,
@@ -21,8 +24,9 @@ import {
     RESULTS,
 } from "react-native-permissions";
 import { useFocusEffect } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
+import { dataTagSymbol, useQuery } from "@tanstack/react-query";
 import { ProductsService, setupAxios } from "./productService";
+import NutriCircle from "./NutriCircle";
 
 const { width, height } = Dimensions.get("window");
 
@@ -125,11 +129,17 @@ export default function HomeScreen({
         }
     };
 
-    const { data: product, isLoading } = useQuery({
+    const {
+        data: product,
+        isLoading,
+        error,
+    } = useQuery({
         queryKey: ["get-product", barcodeModal.barcode],
         enabled: !!barcodeModal.barcode,
         queryFn: () => ProductsService.getProduct(barcodeModal.barcode!),
     });
+
+    console.log("the product recieved was: " + product?.data.img);
 
     return (
         <View style={styles.container}>
@@ -146,7 +156,7 @@ export default function HomeScreen({
             <Sheet
                 open={barcodeModal.open}
                 onOpenChange={handleOpenChange}
-                snapPoints={[30]} // height of sheet
+                snapPoints={[50]} // height of sheet
                 modal={true} // overlays modal on content
                 dismissOnSnapToBottom>
                 <Sheet.Frame
@@ -176,6 +186,53 @@ export default function HomeScreen({
                         }}>
                         {barcodeModal.barcode}
                     </Text>
+
+                    <View style={{ marginTop: 15 }}>
+                        {isLoading ? (
+                            <View>
+                                <ActivityIndicator
+                                    size="large"
+                                    color="#0000ff"
+                                />
+                            </View>
+                        ) : (
+                            <Image
+                                resizeMode="contain"
+                                width={200}
+                                height={200}
+                                source={{
+                                    uri: product?.data.img,
+                                }}
+                                style={{ maxWidth: "100%", maxHeight: "100%" }}
+                            />
+                        )}
+                    </View>
+
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            // borderWidth: 2,
+                            // borderColor: "orange",
+                            alignItems: "center",
+                            gap: 20,
+                            marginTop: 25,
+                        }}>
+                        <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                            NutriScore
+                        </Text>
+                        {isLoading ? (
+                            <View>
+                                <ActivityIndicator
+                                    size="large"
+                                    color="#0000ff"
+                                />
+                            </View>
+                        ) : (
+                            <NutriCircle
+                                score={product?.data.nutriScore ?? "c"}
+                            />
+                        )}
+                    </View>
 
                     <View style={{ marginTop: 15 }}>
                         <Button
